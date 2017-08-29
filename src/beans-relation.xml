@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--抽象bean不能被实例化，只用来继承。当该bean没有class属性时，则必须指定abstruct为true -->
+    <bean id="address" class="Autowired.Address" p:city="beijing" p:street="aaa" abstract="true"></bean>
+
+    <!--当两个配置文件比较接近时， 可以使用继承配置，使用parent属性 -->
+    <bean id="address2" class="Autowired.Address" parent="address" p:street="bbb"></bean>
+
+
+    <bean id="car" class="Autowired.Car" p:brand="audi" p:price="900000"></bean>
+    <!--要求在配置person时必须有一个关联的car -->
+    <bean id="person" class="Autowired.Person" p:name="tom" p:address-ref="address2"
+    depends-on="car"></bean>
+</beans>

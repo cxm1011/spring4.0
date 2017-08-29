@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+        <!-- 通过反射方式在IOC容器中创建Bean,所以在Bean中必须有无参的构造器!-->
+        <bean id="helloWorld" class="hello.HelloWorld">
+            <!-- 通过set方法注入!-->
+            <property name="name" value="spring4">
+            </property>
+        </bean>
+
+        <!-- 通过构造器方法注入!-->
+        <bean id="car" class="hello.Car">
+            <constructor-arg value="Audi" index="0"></constructor-arg>
+            <constructor-arg  index="1">
+                <!--当包含特殊字符时，使用 <![CDATA[ ]]>  包裹起来 -->
+                <value><![CDATA[<SHHAI>]]></value>
+            </constructor-arg>
+            <constructor-arg value="1000000" type="int"></constructor-arg>
+
+        </bean>
+
+        <!-- 通过构造器注入的属性值的类型可以区分重载构造器-->
+        <bean id="car2" class="hello.Car">
+            <constructor-arg value="Audi" type="java.lang.String"></constructor-arg>
+            <constructor-arg value="Shanghai" type="java.lang.String"></constructor-arg>
+            <constructor-arg  type="int">
+                <value>999</value>
+            </constructor-arg>
+        </bean>
+
+        <bean id="person" class="hello.Person">
+            <property name="age" value="26"></property>
+            <property name="name" value="cxm"></property>
+            <!-- 通过ref建立Bean之间的引用关系-->
+            <property name="car" ref="car2"></property>
+            <!-- 给级联属性赋值。注意：属性必须先初始化，即先创建car对象。这与strus不同，strus会默认创建对象-->
+            <property name="car.maxSpeed" value="888"></property>
+        </bean>
+
+        <bean id="person2" class="hello.Person">
+            <property name="age" value="26"></property>
+            <property name="name" value="cxm"></property>
+            <!-- 内部Bean，没有id，因为不能被外部引用-->
+            <property name="car">
+                <bean class="hello.Car">
+                    <constructor-arg name="brand" value="bmw"></constructor-arg>
+                    <constructor-arg name="corp" value="bj"></constructor-arg>
+                    <constructor-arg value="100010" type="double"></constructor-arg>
+                </bean>
+            </property>
+        </bean>
+
+
+        <bean id="car3" class="collection.Car">
+            <constructor-arg value="AudiCollec" index="0"></constructor-arg>
+            <constructor-arg  index="1">
+                <!--当包含特殊字符时，使用 <![CDATA[ ]]>  包裹起来 -->
+                <value><![CDATA[<SHHAI>]]></value>
+            </constructor-arg>
+            <constructor-arg value="1212121" type="int"></constructor-arg>
+
+        </bean>
+        <bean id="car4" class="collection.Car">
+            <constructor-arg value="BMWCollec" index="0"></constructor-arg>
+            <constructor-arg  index="1">
+                <!--当包含特殊字符时，使用 <![CDATA[ ]]>  包裹起来 -->
+                <value><![CDATA[<SHHAI>]]></value>
+            </constructor-arg>
+            <constructor-arg value="992321" type="int"></constructor-arg>
+
+        </bean>
+        <bean id="person3" class="collection.Person">
+            <property name="name" value="Mike"></property>
+            <property name="age" value="33"></property>
+            <!-- 给list集合赋值-->
+            <property name="cars">
+                <list>
+                    <ref bean="car3"></ref>
+                    <ref bean="car4"></ref>
+                </list>
+            </property>
+        </bean>
+
+        <bean name="mapPerson" class="collection.MapPerson">
+            <property name="name" value="rose"></property>
+            <property name="age" value="12"></property>
+            <!--给map属性赋值 -->
+            <!--使用map节点及map的entry字节点配置map类型的成员变量 -->
+            <property name="cars">
+                <map>
+                    <entry key="AA" value-ref="car3"></entry>
+                    <entry key="BB" value-ref="car4"></entry>
+                </map>
+            </property>
+        </bean>
+
+        <!--使用props和prop为properties赋值  -->
+        <bean id="dataSource" class="collection.DataSource">
+            <property name="properties">
+                <props>
+                    <prop key="user">root</prop>
+                    <prop key="password">123456</prop>
+                    <prop key="jdbcurl">jdbc:mysql:///test</prop>
+                    <prop key="driverClass">com.mysql.jdbc.driver</prop>
+                </props>
+            </property>
+        </bean>
+
+        <!-- 通过P命名空间为bean的属性赋值，需要先导入P命名空间，相对于传统的配置方式更加简洁-->
+        <bean id="personP" class="collection.Person" p:age="33" p:name="cxm" p:car-ref="car3">
+
+        </bean>
+
+
+</beans>

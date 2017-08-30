@@ -29,8 +29,16 @@ public class ArithmeticCalculatorLoggingProxy {
                 //日志
                 System.out.println("The method"+methodName+"begin with"+ Arrays.asList(args));
                 //执行方法
-                Object res = method.invoke(target,args);
-
+                Object res = null;
+                try{
+                    //前置通知
+                    res = method.invoke(target,args);
+                    //返回通知
+                }catch (Exception e){
+                    e.printStackTrace();
+                    //异常通知
+                }
+                //后置通知
                 System.out.println("The method"+methodName+"ends with"+res);
                 return 0;
             }

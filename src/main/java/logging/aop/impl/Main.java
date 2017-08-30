@@ -18,5 +18,8 @@ public class Main {
 
         int res = arithmeticCalculartor.add(2,3);
         System.out.println(res);
+
+        res = arithmeticCalculartor.div(2,3);
+        System.out.println(res);
     }
 }

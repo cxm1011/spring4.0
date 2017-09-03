@@ -1,4 +1,4 @@
-package logging;
+package logging_annotation;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

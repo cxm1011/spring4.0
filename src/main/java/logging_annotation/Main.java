@@ -1,4 +1,4 @@
-package logging;
+package logging_annotation;
 
 /**
  * Created by chen on 2017/8/27.

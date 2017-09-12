@@ -6,23 +6,28 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import static org.junit.Assert.fail;
+import java.util.Map;
 
 public class JDBCTest {
 
    private ApplicationContext ctx = null;
    private JdbcTemplate jdbcTemplate;
    private GirlDao girlDao;
+   private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     {
         ctx = new ClassPathXmlApplicationContext("applicationContext_JDBC.xml");
         jdbcTemplate = (JdbcTemplate)ctx.getBean("jdbcTemplate");
         girlDao = ctx.getBean(GirlDao.class);
+        namedParameterJdbcTemplate = (NamedParameterJdbcTemplate)ctx.getBean("namedParameterJdbcTemplate");
     }
    @Test
    public void testGirlDao(){
@@ -80,4 +85,36 @@ public class JDBCTest {
         System.out.println(count);
     }
 
+
+    /*
+    可以为参数取名字。好处：若有多个参数，则不用去对应位置，直接对应参数名，易维护
+    缺点：较为麻烦
+     */
+    @Test
+    public void testNamedParameterJdbcTemplate(){
+        String sql = "insert into girl(id,name,height,age) values(:id,:named,:height,:age)";
+        Map<String,Object> paramMap = new HashMap<String, Object>();
+        paramMap.put("id",10);
+        paramMap.put("named","cxm2");
+        paramMap.put("height",190);
+        paramMap.put("age",29);
+        namedParameterJdbcTemplate.update(sql,paramMap);
+    }
+
+    /*
+   使用具名参数时可以使用 update(String sql, SqlParameterSource paramSource)方法进行更新操作
+   使用BeanPropertySqlParameterSource实现类作为参数
+     */
+    @Test
+    public void testNamedParameterJdbcTemplate2(){
+        String sql = "insert into girl(id,name,height,age) values(:id,:name,:height,:age)";
+        Girl girl = new Girl();
+        girl.setId(11);
+        girl.setAge(13);
+        girl.setHeight(111);
+        girl.setName("hc");
+
+        SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(girl);
+        namedParameterJdbcTemplate.update(sql,parameterSource);
+    }
 }
